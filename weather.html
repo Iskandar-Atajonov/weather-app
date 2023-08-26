@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather</title>
+    <style>
+         body{
+            margin: 0;
+            position: absolute;
+            width: 100%;
+            height:100%;
+            background-image: url(bg3.png);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+         }
+         #contents{
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.37);
+         }
+         #text{
+            border: 1px solid aliceblue;
+            width: 400px;
+            text-align: center;
+            border-radius: 20px;
+            height: 200px;
+            transition: 0.5s;
+            position: relative;
+            background: linear-gradient(135deg,rgba(0, 60, 63, 0.746) ,rgba(0, 234, 255, 0.613));
+         }
+         input{
+            color: transparent;
+            background: url(bg3.png);
+            -webkit-background-clip: text;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding: 5px;
+            width: 80%;
+            font-weight: 900;
+            font-size: 30px;
+            margin-top: 50px;
+            border: none;
+            border-bottom: 5px solid rgba(0, 255, 255, 0.969);
+            border-radius: 20px 0 20px 0;
+            outline: none;
+            font-family:Verdana, Geneva, Tahoma, sans-serif;
+         }
+         h1{
+            font-size:35px;
+            background: url(bg3.png);
+            -webkit-background-clip: text;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-weight: 900;
+            color: transparent;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+         }
+         #date{
+            font-size: 20px;
+            background: url(bg3.png);
+            -webkit-background-clip: text;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-weight: 900;
+            color: transparent;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+         }
+         #temp{
+            font-size: 100px;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            background: url(bg3.png);
+            -webkit-background-clip: text;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: transparent;
+         }
+         #how{
+            font-weight: 900;
+            font-size: 50px;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            background: url(bg3.png);
+            -webkit-background-clip: text;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: transparent;
+         }
+         #err{
+            text-align: left;
+            margin-left: 30px;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            font-size: 20px;
+            background: url(bg3.png);
+            -webkit-background-clip: text;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-weight: 900;
+            display: none;
+            color: transparent;
+         }
+         #speed{
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            font-size: 40px;
+            background: url(bg3.png);
+            -webkit-background-clip: text;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-weight: 900;
+            /* display: none; */
+            color: transparent;
+            margin-top: 50px;
+
+         }
+         #dis{
+            text-align: left;
+            margin-left: 30px;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            font-size: 20px;
+            background: url(bg3.png);
+            -webkit-background-clip: text;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-weight: 900;
+            display: none;
+            color: transparent;
+         }
+         @media(max-width:400px){
+         #text{
+            width: 90%;
+            height: 50%;
+         }
+         }
+    </style>
+</head>
+<body>
+    <div id="contents">
+        <div id="text">
+            <input id="cityname" type="text" autocomplete="off">
+            <p id="err">Invalid city name !!!</p>
+            <p id="dis">You are offline!!!</p>
+            <br>
+            <h1 id="city"></h1>
+            <div id="date"></div>
+            <br>
+            <div id="temp"></div><br>
+            <div id="how"></div>
+            <div id="speed"></div>
+        </div>
+    </div>
+    <script>
+        let search = document.getElementById("cityname")
+        let res = document.getElementById("city")
+        let temp = document.getElementById("temp")
+        let date = document.getElementById("date")
+        let how = document.getElementById("how")
+        function dae() {
+            let dated = new Date
+            let month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+            let days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+            let day = days[dated.getDay()]
+            let m = month[dated.getMonth()]
+            let year = dated.getFullYear()
+            let d = dated.getDate()
+            return date.innerHTML = `${day} ${d} ${m} ${year}`
+        }
+        function loc() {
+            const succes = (pos)=>{
+                console.log(pos.coords.latitude);
+                console.log(pos.coords.longitudee);
+            }
+            const err = ()=>{
+                alert("err")
+            }
+            navigator.geolocation.getCurrentPosition(succes,err)
+        }
+            document.addEventListener("keydown",(e)=>{
+            if (e.keyCode === 13) {   
+            loc()
+                let api = ` https://api.openweathermap.org/data/2.5/weather?q=${search.value}&appid=39f93677cc00356ec7725b518596bc7c `
+                fetch(api)
+                .then(res => res.json())
+                .then(display)
+                function display(weather) {
+                    if (weather.cod === "404") {
+                        res.style.display = "none"
+                        temp.style.display = "none"
+                        date.style.display = "none"
+                        document.getElementById("speed").style.display = "none"
+                        how.style.display = "none"
+                        document.getElementById("text").style.height = "200px"
+                        document.getElementById("err").style.display = "block"
+                    }
+                    else if(search.value == ""){
+                        alert("Please enter city name !!!!")
+                    }
+                    else{
+                        res.style.display = "block"
+                        temp.style.display = "block"
+                        date.style.display = "block"
+                        document.getElementById("speed").style.display = "block"
+                        how.style.display = "block"
+                        search.value = ""
+                        document.getElementById("err").style.display = "none"
+                    temp.innerHTML = `${Math.floor(weather.main.temp - 273.15)} °С`
+                    dae()
+                    document.getElementById("speed").innerHTML = weather.wind.speed + " m/s";
+                    how.innerHTML = weather.weather[0].main
+                    console.log(weather);
+                    res.innerHTML = `${weather.name},${weather.sys.country} `
+                    document.getElementById("text").style.height = "600px"
+                    }
+                }
+                if (window.navigator.onLine) {
+                    // alert("Please,wait....")
+                    document.getElementById("dis").style.display = "none"
+                }
+                else{
+                    document.getElementById("dis").style.display = "block"
+                    alert("No Internet, you are offline")
+                }
+            }
+            
+        })
+        window.addEventListener("load",()=>{
+            if (window.navigator.onLine) {
+                    // alert("Please,wait....")
+                    document.getElementById("dis").style.display = "none"
+                }
+                else{
+                    document.getElementById("dis").style.display = "block"
+                    alert("No Internet, you are offline")
+                }
+        })
+    </script>
+</body>
+</html>
